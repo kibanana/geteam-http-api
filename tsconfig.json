@@ -3,7 +3,7 @@
 		"module": "commonjs",
 		"target": "es6",
 		"outDir": "dist",
-		"rootDir": ".",
+		"baseUrl": "./",
 		"lib": [
 			"dom",
 			"es5",
@@ -16,7 +16,21 @@
 		"typeRoots": [
 			"./@types",
 			"./node_modules/@types"
-		]
+		],
+		"paths": {
+			"@common/*": [
+				"src/common/*"
+			],
+			"@middlewares/*": [
+				"src/middlewares/*"
+			],
+			"@models/*": [
+				"src/models/*"
+			],
+			"@routes/*": [
+				"src/routes/*"
+			]
+		}
 	},
 	"exclude": [
 		"node_modules",
