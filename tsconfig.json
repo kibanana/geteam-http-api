@@ -18,6 +18,9 @@
 			"./node_modules/@types"
 		],
 		"paths": {
+			"@config": [
+				"src/config"
+			],
 			"@common/*": [
 				"src/common/*"
 			],
