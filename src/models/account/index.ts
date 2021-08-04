@@ -82,7 +82,7 @@ export default {
 
         return (await accountColl.countDocuments({ id, isVerified: true })) > 0
     },
-    doesExist: async (param: { _id: string, id: string, sNum: number }): Promise<boolean> => {
+    doesExist: async (param: Partial<{ _id: string, id: string, sNum: number }>): Promise<boolean> => {
         const { _id, id, sNum } = param
 
         const filter: Partial<Filter> = {}

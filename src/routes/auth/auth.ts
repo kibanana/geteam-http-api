@@ -1,5 +1,5 @@
 import express from 'express'
-import * as controller from '../controller/auth.controller'
+import * as controller from '@controllers/auth'
 import passport from 'passport'
 
 const router = express.Router()
