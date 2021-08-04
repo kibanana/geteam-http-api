@@ -1,6 +1,6 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
-import entities from '@models/entities'
+import entities from '@common/constants/entities'
 import Member from './interfaces/Member'
 
 const teamColl = connection.collection(entities.TEAM)
