@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
-import KindType from '@common/constants/kindType'
+import { KindType } from '@common/constants'
 import JwtPayload from '@common/interfaces/jwtPayload'
 import Query from '@common/interfaces/query'
 import redisClient from '@common/lib/redisClient'

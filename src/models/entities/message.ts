@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
-import Account from './account'
+import { Account } from '@models/entities'
 
-export default interface Message {
+export interface Message {
     _id: ObjectId;
     
     originalId: Message['_id']; // reply

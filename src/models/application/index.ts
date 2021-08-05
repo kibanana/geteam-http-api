@@ -1,10 +1,10 @@
 
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
-import entities from '@common/constants/entities'
+import { entities } from '@common/constants'
 import Option from '@common/interfaces/option'
 import { ContestApplication } from '@models/entities/application'
-import Filter from './interfaces/filter'
+import { Filter } from './interfaces'
 
 const applicationColl = connection.collection(entities.APPLICATION)
 const boardColl = connection.collection(entities.BOARD)

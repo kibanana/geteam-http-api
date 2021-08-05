@@ -1,4 +1,4 @@
-export default interface Counting {
+export interface Counting {
     visit: number;
     account: number;
     list: number;

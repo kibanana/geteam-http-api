@@ -1,4 +1,4 @@
-export default interface EmailContentParam {
+export interface EmailContentParam {
     email: string;
     key: string;
     name: string;

@@ -1,4 +1,4 @@
-export default {
+export const entities = {
     ACCOUNT: 'accounts',
     APPLICATION: 'applications',
     BOARD: 'boards',

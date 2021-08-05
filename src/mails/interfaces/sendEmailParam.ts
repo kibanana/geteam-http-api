@@ -1,7 +1,7 @@
 
 import Board from '@models/entities/board'
 
-export default interface SendEmailParam {
+export interface SendEmailParam {
     email: string;
     key: string;
     name: string;

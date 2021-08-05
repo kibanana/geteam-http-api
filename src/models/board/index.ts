@@ -1,13 +1,17 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
-import CategoryType from '@common/constants/categoryType'
-import KindType from '@common/constants/kindType'
-import entities from '@common/constants/entities'
+import {
+    CategoryType,
+    KindType,
+    entities,
+} from '@common/constants'
 import Option from '@common/interfaces/option'
-import Account from '@models/entities/account'
-import Board, { Position } from '@models/entities/board'
-import Filter from './interfaces/filter'
-import UpdateItem from './interfaces/updateItem'
+import {
+    Account,
+    Board,
+    Position,
+} from '@models/entities'
+import { Filter, UpdateItem } from './interfaces'
 
 const boardColl = connection.collection(entities.BOARD)
 

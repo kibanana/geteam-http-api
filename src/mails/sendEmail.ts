@@ -2,8 +2,8 @@ import nodemailer from 'nodemailer'
 import AWS from 'aws-sdk'
 import getContent from '@mails/contents'
 import template from '@mails/templates'
-import SendEmailParam from '@mails/interfaces/sendEmailParam'
-import EmailType from '@common/constants/emailType'
+import { SendEmailParam } from '@mails/interfaces'
+import { EmailType } from '@common/constants'
 import config from '@config'
 
 // AWS.config.loadFromPath('./../aws.json')

@@ -1,8 +1,10 @@
-import KindType from '@common/constants/kindType'
-import CategoryType from '@common/constants/categoryType'
+import {
+    KindType,
+    CategoryType,
+} from '@common/constants'
 import { Position } from '@models/entities/board'
 
-export default interface UpdateItem {
+export interface UpdateItem {
     _id?: string;
     author?: string;
     kind: KindType;

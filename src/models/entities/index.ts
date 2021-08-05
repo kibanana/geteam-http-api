@@ -1,5 +1,6 @@
 export * from './account'
 export * from './application'
 export * from './board'
+export * from './counting'
 export * from './message'
 export * from './team'

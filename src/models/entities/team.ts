@@ -1,12 +1,12 @@
 import { ObjectId } from 'mongodb'
-import Account from './account'
+import { Account } from '@models/entities'
 
 interface IMember {
     accountId: Account['_id'];
     position: string;
 }
 
-export default interface Team {
+export interface Team {
     _id: ObjectId;
 
     name: string;

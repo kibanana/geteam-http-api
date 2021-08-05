@@ -1,9 +1,8 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import entities from '@common/constants/entities'
-import Filter from './interfaces/filter'
-import UpdateNotifications from './interfaces/updateNotifications'
+import { entities } from '@common/constants'
+import { Filter, UpdateNotifications } from './interfaces'
 
 const accountColl = connection.collection(entities.ACCOUNT)
 

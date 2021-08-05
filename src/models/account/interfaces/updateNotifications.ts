@@ -1,4 +1,4 @@
-export default interface UpdateNotifications {
+export interface UpdateNotifications {
     _id?: string;
     notifications: { applied?: boolean, accepted?: boolean, team?: boolean };
 }

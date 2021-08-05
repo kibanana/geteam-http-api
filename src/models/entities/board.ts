@@ -1,7 +1,9 @@
 import { ObjectId } from 'mongodb'
-import Account from './account'
-import CategoryType from '@common/constants/categoryType'
-import KindType from '@common/constants/kindType'
+import {
+	CategoryType,
+	KindType,
+} from '@common/constants'
+import { Account } from '@models/entities'
 
 export interface Position {
     title: string;
@@ -9,7 +11,7 @@ export interface Position {
     cnt?: number;
 }
 
-export default interface Board {
+export interface Board {
 	_id?: ObjectId;
 
 	author: Account['_id'];

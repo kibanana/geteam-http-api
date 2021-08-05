@@ -1,4 +1,4 @@
-export default interface Filter {
+export interface Filter {
     active: boolean;
     isCompleted: boolean;
     $or: any;

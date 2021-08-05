@@ -1,5 +1,5 @@
-import EmailType from '@common/constants/emailType'
-import EmailContentParam from '../interfaces/emailContentParam'
+import { EmailType } from '@common/constants'
+import { EmailContentParam } from '@mails/interfaces'
 
 export default (emailType: EmailType, param: Partial<EmailContentParam>) => {
     const {

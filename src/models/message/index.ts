@@ -1,8 +1,8 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
-import entities from '@common/constants/entities'
+import { entities } from '@common/constants'
 import PaginationOption from '@common/interfaces/PaginationOption'
-import Filter from './interfaces/filter'
+import { Filter } from './interfaces'
 
 const messageColl = connection.collection(entities.MESSAGE)
 

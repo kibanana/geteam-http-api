@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb'
-import Account from './account'
-import Board from './board'
+import {
+    Account,
+    Board,
+} from '@models/entities'
 
 export interface ContestApplication {
     position?: string; // only contest
@@ -8,7 +10,7 @@ export interface ContestApplication {
     portfolioText?: string; // only contest
 }
 
-export default interface Application {
+export interface Application {
     _id: ObjectId;
 
     applicant: Account['_id'];

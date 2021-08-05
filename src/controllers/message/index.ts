@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse';
-import JwtPayload from '@common/interfaces/jwtPayload'
 import Query from '@common/interfaces/query'
 import entities from '@models/index'
 
