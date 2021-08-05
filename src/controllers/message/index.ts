@@ -9,7 +9,7 @@ const MessageDB = entities.message
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { recvAccountId, content, originalId } = req.body
 
         if ((originalId && originalId.length !== 24) || !recvAccountId || recvAccountId.length !== 24 || !content) {
@@ -28,7 +28,7 @@ export const Create = async (req: Request, res: Response) => {
 
 export const GetReceiveMessageList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         let { offset, limit } = req.query
 
         offset = isNaN(Number(offset)) ? 0 : Number(offset) as number
@@ -46,7 +46,7 @@ export const GetReceiveMessageList = async (req: Request<{}, {}, {}, Query>, res
 
 export const GetSendMessageList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         let { offset, limit } = req.query
 
         offset = isNaN(Number(offset)) ? 0 : Number(offset) as number
@@ -64,7 +64,7 @@ export const GetSendMessageList = async (req: Request<{}, {}, {}, Query>, res: R
 
 export const UpdateIsRead = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { id } = req.params
 
         if (!id || id.length !== 24) {
@@ -83,7 +83,7 @@ export const UpdateIsRead = async (req: Request, res: Response) => {
 
 export const DeleteList = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { ids } = req.query
 
         let isValid = true
@@ -107,7 +107,7 @@ export const DeleteList = async (req: Request, res: Response) => {
 
 export const DeleteItem = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { id } = req.params
 
         if (!id || id.length !== 24) {

@@ -2,12 +2,13 @@ import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
+import EmailType from '@common/constants/emailType'
 import BoardGetItemRes from '@common/interfaces/boardItem.res'
 import JwtPayload from '@common/interfaces/jwtPayload'
 import Query from '@common/interfaces/query'
 import redisClient from '@common/lib/redisClient'
-import { sendTeamEmail } from '@common/lib/sendEmail'
 import { validateKind, validateCategory, validateModifyOrder } from '@common/lib/validateValue'
+import sendEmail from '@mails/sendEmail'
 import entities from '@models/index'
 import config from '@config'
 
@@ -87,7 +88,7 @@ export const GetItem = async (req: Request, res: Response) => {
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const {
             kind,
             category,
@@ -138,7 +139,7 @@ export const Create = async (req: Request, res: Response) => {
 
 export const Update = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { id } = req.params
         const {
             kind,
@@ -188,7 +189,7 @@ export const Update = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { id } = req.params
     
         if (!id || id.length !== 24) {
@@ -205,7 +206,7 @@ export const Delete = async (req: Request, res: Response) => {
 
 export const CreateTeam = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { id } = req.params
         const { name, content, message } = req.body
     
@@ -237,7 +238,14 @@ export const CreateTeam = async (req: Request, res: Response) => {
         await redisClient.incCnt('teamCnt')
 
         for (let i = 0; i < list.length; i++) {
-            sendTeamEmail(list[i].applicant, board.kind, board, message)
+            sendEmail(EmailType.TeamCompleted, {
+                email: list[i].applicant,
+                kind: board.kind,
+                boardTitle: board.title,
+                boardId: board._id,
+                boardAuthor: board.author,
+            })
+            .catch((err: Error) => console.log(err))
         }
         
         res.send(SuccessResponse())

@@ -14,7 +14,7 @@ const BoardDB = entities.board
 
 export const GetList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         let { kind, author, offset, limit, option } = req.query
 
         kind = validateKind(kind!)
@@ -38,7 +38,7 @@ export const GetList = async (req: Request<{}, {}, {}, Query>, res: Response) =>
 
 export const GetListOnMyParticularBoard = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         let { boardid: boardId } = req.params
     
         if (!boardId || boardId.length !== 24) {
@@ -57,7 +57,7 @@ export const GetListOnMyParticularBoard = async (req: Request, res: Response) =>
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { boardId, wantedText } = req.body
         let { kind, position, portfolio, portfolioText } = req.body
 
@@ -102,7 +102,7 @@ export const Create = async (req: Request, res: Response) => {
 
 export const UpdateAccept = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { boardid: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {
@@ -133,7 +133,7 @@ export const UpdateAccept = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { boardid: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {

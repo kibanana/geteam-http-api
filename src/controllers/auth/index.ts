@@ -4,12 +4,12 @@ import decodeJWT from 'jwt-decode'
 import bcrypt from 'bcryptjs'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
+import EmailType from '@common/constants/emailType'
 import DecodedJwt from '@common/interfaces/decodedJwt'
-import JwtPayload from '@common/interfaces/jwtPayload'
 import createKey from '@common/lib/createKey'
 import createHash from '@common/lib/createHash'
 import redisClient from '@common/lib/redisClient'
-import { sendAuthEmail, sendPwdEmail } from '@common/lib/sendEmail'
+import sendEmail from '@mails/sendEmail'
 import entities from '@models/index'
 import config from '@config'
 
@@ -24,7 +24,8 @@ export const Create = async (req: Request, res: Response) => {
         }
     
         const verifyKey = createKey()
-        await sendAuthEmail(id, verifyKey)
+        sendEmail(EmailType.Auth, { email: id, key: verifyKey })
+            .catch((err: Error) => console.log(err))
     
         await AccountDB.DeleteBeforeSignUp({ id })
         await AccountDB.SignUp({ id, name, pwd, sNum, interests, profile, verifyKey })
@@ -89,7 +90,8 @@ export const SetVerifyKey = async (req: Request, res: Response) => {
             return res.status(404).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
     
-        sendAuthEmail(id, verifyKey)
+        sendEmail(EmailType.Auth, { email: id, key: verifyKey })
+            .catch((err: Error) => console.log(err))
     
         res.send(SuccessResponse())
     } catch (err) {
@@ -201,7 +203,7 @@ export const VerifyToken = async (req: Request, res: Response) => {
 
 export const SignOut = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
     
         const decodedAccessToken: DecodedJwt = decodeJWT(accessToken)
@@ -237,7 +239,8 @@ export const ResetPassword = async (req: Request, res: Response) => {
         if (result.interests.includes(hint)) {
             const newPwd = createHash(result.interests.join('') + new Date().toISOString())
             await AccountDB.UpdatePassword({ _id: result._id, pwd: newPwd })
-            sendPwdEmail('Geteam 비밀번호 초기화', result.id, result.name, newPwd)
+            sendEmail(EmailType.PasswordReset, { email: result.id, name: result.name, password: newPwd })
+                .catch((err: Error) => console.log(err))
         }
     
         res.send(SuccessResponse())
@@ -283,7 +286,7 @@ export const CheckIsDuplicatedSnum = async (req: Request, res: Response) => {
 
 export const UpdatePassword = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { oldPwd, newPwd } = req.body
         
         const result = await AccountDB.GetPassword({ _id: me })
@@ -313,7 +316,7 @@ export const UpdatePassword = async (req: Request, res: Response) => {
 
 export const GetInfo = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
     
         const result = await AccountDB.GetItem({ _id: me })
     
@@ -326,7 +329,7 @@ export const GetInfo = async (req: Request, res: Response) => {
 
 export const UpdateInfo = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { name, sNum, interests, profile } = req.body
 
         await AccountDB.UpdateInfo({ _id: me, name, sNum, interests, profile })
@@ -340,7 +343,7 @@ export const UpdateInfo = async (req: Request, res: Response) => {
 
 export const UpdateNotifications = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const { notifications } = req.body
 
         if (!notifications) {
@@ -358,7 +361,7 @@ export const UpdateNotifications = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user as JwtPayload
+        const { _id: me } = req.user
         const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
     
         const decodedAccessToken: DecodedJwt = decodeJWT(accessToken)

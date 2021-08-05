@@ -23,6 +23,9 @@
 			"@controllers/*": [
 				"src/controllers/*"
 			],
+			"@mails/*": [
+				"src/mails/*"
+			],
 			"@middlewares/*": [
 				"src/middlewares/*"
 			],
