@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse';
-import Query from '@common/interfaces/query'
-import entities from '@models/index'
-
-const MessageDB = entities.message
+import { QueryString } from '@common/interfaces'
+import MessageDB from '@models/message'
 
 export const Create = async (req: Request, res: Response) => {
     try {
@@ -25,7 +23,7 @@ export const Create = async (req: Request, res: Response) => {
     }
 }
 
-export const GetReceiveMessageList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
+export const GetReceiveMessageList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
     try {
         const { _id: me } = req.user
         let { offset, limit } = req.query
@@ -43,7 +41,7 @@ export const GetReceiveMessageList = async (req: Request<{}, {}, {}, Query>, res
     }
 }
 
-export const GetSendMessageList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
+export const GetSendMessageList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
     try {
         const { _id: me } = req.user
         let { offset, limit } = req.query

@@ -1,4 +1,4 @@
-import Response from '@common/interfaces/response'
+import { Response } from '@common/interfaces'
 
 export const SuccessResponse = (data: any = {}) => {
     return {

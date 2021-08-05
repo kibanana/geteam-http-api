@@ -2,17 +2,14 @@ import { Request, Response } from 'express'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
 import { KindType } from '@common/constants'
-import JwtPayload from '@common/interfaces/jwtPayload'
-import Query from '@common/interfaces/query'
+import { QueryString } from '@common/interfaces'
 import redisClient from '@common/lib/redisClient'
 import { validateKind } from '@common/lib/validateValue'
-import entities from '@models/index'
+import ApplicationDB from '@models/application'
+import BoardDB from '@models/board'
 import { ContestApplication } from '@models/entities/application'
 
-const ApplicationDB = entities.application
-const BoardDB = entities.board
-
-export const GetList = async (req: Request<{}, {}, {}, Query>, res: Response) => {
+export const GetList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
     try {
         const { _id: me } = req.user
         let { kind, author, offset, limit, option } = req.query

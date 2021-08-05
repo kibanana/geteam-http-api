@@ -1,5 +1,5 @@
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
-import JwtPayload from '@common/interfaces/jwtPayload'
+import { JwtPayload } from '@common/interfaces'
 import AccountDB from '@models/account'
 import config from '@config'
 

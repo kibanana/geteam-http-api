@@ -5,15 +5,13 @@ import bcrypt from 'bcryptjs'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
 import { EmailType } from '@common/constants'
-import DecodedJwt from '@common/interfaces/decodedJwt'
+import { DecodedJwt } from '@common/interfaces'
 import createKey from '@common/lib/createKey'
 import createHash from '@common/lib/createHash'
 import redisClient from '@common/lib/redisClient'
 import sendEmail from '@mails/sendEmail'
-import entities from '@models/index'
+import AccountDB from '@models/account'
 import config from '@config'
-
-const AccountDB = entities.account
 
 export const Create = async (req: Request, res: Response) => {
     try {

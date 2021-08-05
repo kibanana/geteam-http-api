@@ -2,7 +2,7 @@ import {
     CategoryType,
     KindType,
 } from '@common/constants'
-import { OrderOption } from '@common/interfaces/option'
+import { OrderOption } from '@common/interfaces'
 
 export const validateKind = (kind: string) => {
     switch (kind) {

@@ -3,20 +3,21 @@ import jwt from 'jsonwebtoken'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
 import FAILURE_RESPONSE from '@common/lib/failureResponse'
 import { EmailType } from '@common/constants'
-import BoardGetItemRes from '@common/interfaces/boardItem.res'
-import JwtPayload from '@common/interfaces/jwtPayload'
-import Query from '@common/interfaces/query'
+import BoardGetItemRes from '@common/interfaces/boardItemResponse'
+import {
+    JwtPayload,
+    QueryString,
+} from '@common/interfaces'
 import redisClient from '@common/lib/redisClient'
 import { validateKind, validateCategory, validateModifyOrder } from '@common/lib/validateValue'
 import sendEmail from '@mails/sendEmail'
-import entities from '@models/index'
+import ApplicationDB from '@models/application'
+import BoardDB from '@models/board'
+import TeamDB from '@models/team'
 import config from '@config'
 
-const BoardDB = entities.board
-const ApplicationDB = entities.application
-const TeamDB = entities.team
 
-export const GetList = async (req: Request<any, any, any, Query>, res: Response) => {
+export const GetList = async (req: Request<any, any, any, QueryString>, res: Response) => {
     try {
         let { kind, category } = req.params
         let { searchText, offset, limit, order } = req.query

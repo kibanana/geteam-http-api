@@ -1,5 +1,5 @@
 import passport from 'passport'
-import JwtPayload from '@common/interfaces/jwtPayload'
+import { JwtPayload } from '@common/interfaces'
 import JwtStratery from './strategies/jwtStrategy'
 
 passport.use('jwt', JwtStratery)

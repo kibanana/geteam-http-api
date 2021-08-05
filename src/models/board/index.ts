@@ -5,7 +5,7 @@ import {
     KindType,
     entities,
 } from '@common/constants'
-import Option from '@common/interfaces/option'
+import { Option } from '@common/interfaces'
 import {
     Account,
     Board,

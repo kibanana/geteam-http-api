@@ -2,7 +2,7 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { entities } from '@common/constants'
-import Option from '@common/interfaces/option'
+import { Option } from '@common/interfaces'
 import { ContestApplication } from '@models/entities/application'
 import { Filter } from './interfaces'
 
