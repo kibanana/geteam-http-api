@@ -6,5 +6,3 @@ passport.use('jwt', JwtStratery)
 
 passport.serializeUser((account, done) => done(null, account))
 passport.deserializeUser((account: JwtPayload, done) => done(null, account))
-
-export default passport

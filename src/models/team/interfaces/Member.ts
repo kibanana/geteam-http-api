@@ -1,7 +1,7 @@
 export interface Member {
-    accountId: string
+    accountId: string;
     position?: {
-        title: string
-        description: string
+        title: string;
+        description: string;
     }
 }

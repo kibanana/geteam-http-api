@@ -10,7 +10,7 @@ import {
 } from '@common/interfaces'
 import redisClient from '@common/lib/redisClient'
 import { validateKind, validateCategory, validateModifyOrder } from '@common/lib/validateValue'
-import sendEmail from '@mails/sendEmail'
+import sendEmail from '@mails/'
 import ApplicationDB from '@models/application'
 import BoardDB from '@models/board'
 import TeamDB from '@models/team'

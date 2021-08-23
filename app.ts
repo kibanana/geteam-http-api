@@ -1,4 +1,5 @@
 import express from 'express'
+import passport from 'passport'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
@@ -8,7 +9,6 @@ import dotenv from 'dotenv'
 dotenv.config()
 import config from '@config'
 import redisClient from '@common/lib/redisClient'
-import passport from '@middlewares/passport'
 import '@models/connection'
 import router from '@routes'
 
@@ -45,4 +45,6 @@ app.use(morgan('dev'))
 app.use('/api', router)
 
 const port = process.env.PORT || config.PORT
-app.listen(port, () => { console.log(`Server is running on ${port}!`) })
+app.listen(port, () => {
+    console.log(`Server is running on ${port}!`)
+})

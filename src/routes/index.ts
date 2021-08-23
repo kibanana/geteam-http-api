@@ -13,5 +13,3 @@ router.use('auth', auth)
 router.use('boards', board)
 router.use('count', count)
 router.use('messages', message)
-
-module.exports = router

@@ -1,5 +1,4 @@
-
-import Board from '@models/entities/board'
+import { Board } from '@models/entities'
 
 export interface SendEmailParam {
     email: string;

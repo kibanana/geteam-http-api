@@ -1,7 +1,23 @@
-import { JwtPayload } from '@common/interfaces';
+import { JwtPayload } from '@common/interfaces'
 
-declare module 'express' {
+declare namespace Express {
+    export interface Request<
+        Body = any,
+        Query = any,
+        Params = any,
+        Cookies = any,
+    > extends Express.Request {
+        body: Body;
+        query: Query;
+        params: Params;
+        cookies: Cookies;
+    }
+}
+
+declare namespace Express {
     export interface Request  {
-        user: JwtPayload
+        body: {
+            user: JwtPayload;
+        };
     }
 }

@@ -1,6 +1,6 @@
+import passport from 'passport'
 import express from 'express'
 import * as controller from '@controllers/message'
-import passport from 'passport'
 
 const router = express.Router()
 export default router

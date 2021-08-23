@@ -1,4 +1,4 @@
 export interface DecodedJwt {
-    _id: string
-    exp: number
+    _id: string;
+    exp: number;
 }

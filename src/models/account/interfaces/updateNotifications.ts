@@ -1,4 +1,8 @@
 export interface UpdateNotifications {
     _id?: string;
-    notifications: { applied?: boolean, accepted?: boolean, team?: boolean };
+    notifications: {
+        applied?: boolean,
+        accepted?: boolean,
+        team?: boolean
+    };
 }

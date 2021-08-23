@@ -1,15 +1,19 @@
 import { Request, Response } from 'express'
-import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
-import FAILURE_RESPONSE from '@common/lib/failureResponse'
 import { KindType } from '@common/constants'
 import { QueryString } from '@common/interfaces'
-import redisClient from '@common/lib/redisClient'
-import { validateKind } from '@common/lib/validateValue'
+import {
+    FAILURE_RESPONSE,
+    SuccessResponse,
+    FailureResponse,
+    InternalErrorResponse,
+    redisClient,
+    validateKind,
+} from '@common/lib'
 import ApplicationDB from '@models/application'
 import BoardDB from '@models/board'
 import { ContestApplication } from '@models/entities/application'
 
-export const GetList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
+export const GetList = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user
         let { kind, author, offset, limit, option } = req.query

@@ -1,4 +1,4 @@
-export default {
+export const FAILURE_RESPONSE = {
     INVALID_PARAM: {
         code: 'ERR_INVALID_PARAM',
         description: '유효하지 않은 인수입니다!'

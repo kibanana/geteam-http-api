@@ -9,7 +9,7 @@ import { DecodedJwt } from '@common/interfaces'
 import createKey from '@common/lib/createKey'
 import createHash from '@common/lib/createHash'
 import redisClient from '@common/lib/redisClient'
-import sendEmail from '@mails/sendEmail'
+import sendEmail from '@mails/'
 import AccountDB from '@models/account'
 import config from '@config'
 
