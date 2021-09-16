@@ -3,15 +3,13 @@ import jwt from 'jsonwebtoken'
 import decodeJWT from 'jwt-decode'
 import bcrypt from 'bcryptjs'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
-import FAILURE_RESPONSE from '@common/lib/failureResponse'
+import { FAILURE_RESPONSE } from '@common/lib/failureResponse'
 import { EmailType } from '@common/constants'
 import { DecodedJwt } from '@common/interfaces'
-import createKey from '@common/lib/createKey'
-import createHash from '@common/lib/createHash'
-import redisClient from '@common/lib/redisClient'
-import sendEmail from '@mails/'
+import { createKey, createHash, redisClient } from '@common/lib'
+import sendEmail from '@mails/index'
 import AccountDB from '@models/account'
-import config from '@config'
+import config from '../../../config'
 
 export const Create = async (req: Request, res: Response) => {
     try {
@@ -22,6 +20,7 @@ export const Create = async (req: Request, res: Response) => {
         }
     
         const verifyKey = createKey()
+
         sendEmail(EmailType.Auth, { email: id, key: verifyKey })
             .catch((err: Error) => console.log(err))
     
@@ -149,8 +148,7 @@ export const RefreshToken = async (req: Request, res: Response) => {
             if (decodedOldAccessToken.exp * 1000 > new Date().getTime()) {
                 return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
             }
-        }
-        else {
+        } else {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
     
@@ -158,8 +156,7 @@ export const RefreshToken = async (req: Request, res: Response) => {
         if (!result) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
-    
-        // Verify refresh token
+        
         jwt.verify(result.refreshToken, process.env.REFRESH_SECRET || config.REFRESH_SECRET)
     
         const payload = { _id: result._id }
@@ -201,7 +198,7 @@ export const VerifyToken = async (req: Request, res: Response) => {
 
 export const SignOut = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
     
         const decodedAccessToken: DecodedJwt = decodeJWT(accessToken)
@@ -284,7 +281,7 @@ export const CheckIsDuplicatedSnum = async (req: Request, res: Response) => {
 
 export const UpdatePassword = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { oldPwd, newPwd } = req.body
         
         const result = await AccountDB.GetPassword({ _id: me })
@@ -314,7 +311,7 @@ export const UpdatePassword = async (req: Request, res: Response) => {
 
 export const GetInfo = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
     
         const result = await AccountDB.GetItem({ _id: me })
     
@@ -327,7 +324,7 @@ export const GetInfo = async (req: Request, res: Response) => {
 
 export const UpdateInfo = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { name, sNum, interests, profile } = req.body
 
         await AccountDB.UpdateInfo({ _id: me, name, sNum, interests, profile })
@@ -341,7 +338,7 @@ export const UpdateInfo = async (req: Request, res: Response) => {
 
 export const UpdateNotifications = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { notifications } = req.body
 
         if (!notifications) {
@@ -359,7 +356,7 @@ export const UpdateNotifications = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
     
         const decodedAccessToken: DecodedJwt = decodeJWT(accessToken)
