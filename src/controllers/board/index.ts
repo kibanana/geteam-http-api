@@ -1,44 +1,43 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
-import FAILURE_RESPONSE from '@common/lib/failureResponse'
-import { EmailType } from '@common/constants'
+import { FAILURE_RESPONSE } from '@common/lib/failureResponse'
+import { CategoryType, EmailType, KindType } from '@common/constants'
 import BoardGetItemRes from '@common/interfaces/boardItemResponse'
-import {
-    JwtPayload,
-    QueryString,
-} from '@common/interfaces'
-import redisClient from '@common/lib/redisClient'
+import { JwtPayload, OrderOption } from '@common/interfaces'
+import { redisClient } from '@common/lib/redisClient'
 import { validateKind, validateCategory, validateModifyOrder } from '@common/lib/validateValue'
-import sendEmail from '@mails/'
+import sendEmail from '@mails/index'
 import ApplicationDB from '@models/application'
 import BoardDB from '@models/board'
 import TeamDB from '@models/team'
-import config from '@config'
+import config from '../../../config'
 
-
-export const GetList = async (req: Request<any, any, any, QueryString>, res: Response) => {
+export const GetList = async (req: Request, res: Response) => {
     try {
         let { kind, category } = req.params
         let { searchText, offset, limit, order } = req.query
     
-        kind = validateKind(kind) as string
-        category = validateCategory(kind, category) as string
-        offset = isNaN(Number(offset)) ? 0 : offset as number
-        limit = isNaN(Number(limit)) ? 12 : limit as number
-        order = validateModifyOrder(order as string)
+        searchText = searchText as string
+        kind = validateKind(kind) || KindType.All
+        category = validateCategory(kind, category) || CategoryType.Etc
+        const offsetNumber = isNaN(Number(offset)) ? 0 : Number(offset)
+        const limitNumber = isNaN(Number(limit)) ? 12 : Number(limit)
+        const orderOption = validateModifyOrder(order as string) as OrderOption
 
         let me = undefined
         let payload = undefined
-
         try {
             const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
             payload = jwt.verify(accessToken, config.JWT_SECRET, { issuer: config.JWT_ISSUER }) as JwtPayload
             me = payload._id
         }
-        catch (e) {}
+        catch (err) {}
     
-        const result = await BoardDB.GetList({ kind, category, author: me }, { skip: limit * offset, limit, order, searchText })
+        const result = await BoardDB.GetList(
+            { kind, category, author: me },
+            { skip: limitNumber * offsetNumber, limit: limitNumber, order: orderOption, searchText }
+        )
         
         res.send(SuccessResponse(result))
     }
@@ -56,13 +55,14 @@ export const GetItem = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
         
-        let me, payload: JwtPayload | undefined, isApplied, isAccepted
+        let me = undefined
+        let payload = undefined
         try {
             const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
             payload = jwt.verify(accessToken, config.JWT_SECRET, { issuer: config.JWT_ISSUER }) as JwtPayload
             me = payload._id
         }
-        catch (e) {}
+        catch (err) {}
 
         const board = await BoardDB.GetItem({ _id: id })
         if (!board) {
@@ -72,12 +72,9 @@ export const GetItem = async (req: Request, res: Response) => {
         await BoardDB.UpdateHit({ _id: id, diff: 1 })
 
         const data: BoardGetItemRes = { board }
-
         if (me) {
-            isApplied = await ApplicationDB.IsApplied({ applicant: me, boardId: id })
-            isAccepted = await ApplicationDB.IsAccepted({ applicant: me, boardId: id })
-            data.isApplied = isApplied as boolean
-            data.isAccepted = isAccepted as boolean
+            data.isApplied = await ApplicationDB.IsApplied({ applicant: me, boardId: id })
+            data.isAccepted = await ApplicationDB.IsAccepted({ applicant: me, boardId: id })
         }
 
         res.send(SuccessResponse(data))
@@ -89,7 +86,7 @@ export const GetItem = async (req: Request, res: Response) => {
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const {
             kind,
             category,
@@ -107,8 +104,8 @@ export const Create = async (req: Request, res: Response) => {
         if (
             !kind || !category || !topic || !title || !content || isNaN(wantCnt) || isNaN(Date.parse(endDate)) ||
             (positions && !Array.isArray(positions)) ||
-            kind !== validatedKind ||
-            category !== validatedCategory
+            !validatedKind ||
+            !validatedCategory
         ) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
@@ -140,7 +137,7 @@ export const Create = async (req: Request, res: Response) => {
 
 export const Update = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { id } = req.params
         const {
             kind,
@@ -160,10 +157,10 @@ export const Update = async (req: Request, res: Response) => {
             (!id || id.length !== 24) ||
             !kind || !category || !topic || !title || !content || isNaN(wantCnt) || isNaN(Date.parse(endDate)) ||
             (positions && !Array.isArray(positions)) ||
-            kind !== validatedKind ||
-            category !== validatedCategory
+            !validatedKind ||
+            !validatedCategory
         ) {
-        return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
+            return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
         const result = await BoardDB.UpdateItem({
@@ -190,7 +187,7 @@ export const Update = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { id } = req.params
     
         if (!id || id.length !== 24) {
@@ -207,7 +204,7 @@ export const Delete = async (req: Request, res: Response) => {
 
 export const CreateTeam = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { id } = req.params
         const { name, content, message } = req.body
     
