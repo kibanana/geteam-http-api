@@ -1,15 +1,14 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import {
-    CategoryType,
     KindType,
-    entities,
+    entities
 } from '@common/constants'
 import { Option } from '@common/interfaces'
 import {
     Account,
     Board,
-    Position,
+    Position
 } from '@models/entities'
 import { Filter, UpdateItem } from './interfaces'
 
@@ -18,8 +17,8 @@ const boardColl = connection.collection(entities.BOARD)
 export default {
     Create: (params: {
         author: string,
-        kind: KindType,
-        category: CategoryType,
+        kind: string,
+        category: string,
         topic: string,
         title: string,
         content: string,
@@ -65,8 +64,8 @@ export default {
     },
     GetList: async (
         params: {
-            kind: KindType,
-            category: CategoryType,
+            kind: string,
+            category: string,
             author?: string
         },
         options: Option
@@ -118,7 +117,7 @@ export default {
             title,
             content,
             wantCnt,
-            endDate,
+            endDate
         } = params
 
         const updateQuery: { $set: UpdateItem } = {

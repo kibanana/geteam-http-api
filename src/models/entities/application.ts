@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import {
     Account,
-    Board,
+    Board
 } from '@models/entities'
 
 export interface ContestApplication {

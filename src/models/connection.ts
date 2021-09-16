@@ -1,5 +1,5 @@
 import { connect } from 'mongoose'
-import config from '@config'
+import config from '../../config'
 
 export default connect(
         process.env.DB_URL || config.DB_URL,
@@ -10,11 +10,11 @@ export default connect(
             reconnectTries: Number.MAX_VALUE,
         }
     )
-    .then((connection: any) => {
+    .then((connection) => {
         console.log('Mongodb connected')
         return connection
     })
-    .catch((err: any) => {
+    .catch((err) => {
         console.log('Mongodb not connected')
         console.log(err)
     })

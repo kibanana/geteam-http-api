@@ -19,7 +19,7 @@ export default {
         sNum: number,
         interests: string[],
         profile: string,
-        verifyKey: string,
+        verifyKey: string
     }) => {
         const { id, name, sNum, interests, profile, verifyKey } = params
         let { pwd } = params
@@ -44,7 +44,7 @@ export default {
             verifyExpireAt: new Date(currentDate.getTime() + (3600000)), // 1 hour
             active: false,
             createdAt: currentDate,
-            updatedAt: currentDate,
+            updatedAt: currentDate
         })
     },
     SignIn: (params: { id: string }) => {

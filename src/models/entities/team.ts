@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { Account } from '@models/entities'
 
-interface IMember {
+interface Member {
     accountId: Account['_id'];
     position: string;
 }
@@ -11,7 +11,7 @@ export interface Team {
 
     name: string;
     master: Account['_id'];
-    members: IMember[];
+    members: Member[];
     content: string;
     
     createdAt: Date;

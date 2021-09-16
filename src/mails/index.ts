@@ -4,7 +4,7 @@ import getContent from '@mails/contents'
 import template from '@mails/templates'
 import { SendEmailParam } from '@mails/interfaces'
 import { EmailType } from '@common/constants'
-import config from '@config'
+import config from '../../config'
 
 // AWS.config.loadFromPath('./../aws.json')
 
@@ -92,6 +92,6 @@ export default async (emailType: EmailType, params: Partial<SendEmailParam>) => 
 		transporter.close()
 	}
 	catch (err) {
-		throw new Error(err)
+		console.log(err)
 	}
 }

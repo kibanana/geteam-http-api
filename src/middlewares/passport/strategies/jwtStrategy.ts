@@ -1,7 +1,7 @@
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
 import { JwtPayload } from '@common/interfaces'
 import AccountDB from '@models/account'
-import config from '@config'
+import config from '../../../../config'
 
 export default new JWTStrategy(
 	{
@@ -16,7 +16,7 @@ export default new JWTStrategy(
             else done(null, { _id: payload._id })
         }
         catch (err) {
-            done(null, { error: err }) // passport에서 error가 발생하는 건 피한다
+            done(null, { error: err })
         }
     })
 )

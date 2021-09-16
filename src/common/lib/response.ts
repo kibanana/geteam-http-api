@@ -11,11 +11,11 @@ export const FailureResponse = (data: Response) => {
     const { code, description } = data
     return {
         code,
-        description,
+        description
     }
 }
 
 export const InternalErrorResponse = FailureResponse({
     code: 'ERR_INTERNAL_ERROR',
-    description: '서버에 오류가 발생했습니다.',
+    description: '서버에 오류가 발생했습니다.'
 })

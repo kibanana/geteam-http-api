@@ -27,14 +27,14 @@ export default {
         if (portfolioText) contestObj.portfolioText = portfolioText
 
         return applicationColl.insertOne({
-        applicant: new ObjectId(applicant),
-        author: new ObjectId(author),
-        boardId: new ObjectId(boardId),
-        wantedText,
-        ...contestObj,
-        active: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
+            applicant: new ObjectId(applicant),
+            author: new ObjectId(author),
+            boardId: new ObjectId(boardId),
+            wantedText,
+            ...contestObj,
+            active: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
         })
     },
     GetList: async (
@@ -49,21 +49,23 @@ export default {
         options: Option = {}
     ) => {
         const { applicant, kind, author, isAccepted, active, boardId } = params
-        const { skip, limit, option } = options
+        const { skip, limit, status } = options
 
         const filter: Partial<Filter> = {}
         if (isAccepted) filter.isAccepted = isAccepted
         if (active) filter.active = active
         if (boardId) filter.boardId = new ObjectId(boardId)
 
-        switch (option) {
+        switch (status) {
             case 'applied':
                 if (author) filter.author = new ObjectId(author)
                 break
-            case 'accepted': case 'unaccpeted':
+            case 'accepted':
+            case 'unaccpeted':
                 if (applicant) filter.applicant = new ObjectId(applicant)
                 break
-            default: break
+            default:
+                break
         }
 
         if (kind && kind !== 'all') {
@@ -75,17 +77,21 @@ export default {
                     { author: new ObjectId(filter.author), kind },
                     { projection: { _id: true } }
                 ).toArray()
+
                 filter.boardId = listByKind.map(board => new ObjectId(board._id))
             }
+
             if (filter.applicant) {
                 boardIds = await applicationColl.find(
                     { applicant: new ObjectId(filter.applicant) },
                     { projection: { boardId: true } }
                 ).toArray()
+
                 listByKind = await boardColl.find(
                     { _id: boardIds.map(board => new ObjectId(board._id)), kind },
                     { projection: { _id: true } }
                 ).toArray()
+
                 filter.boardId = listByKind.map(board => new ObjectId(board._id))
             }
         }

@@ -1,8 +1,4 @@
 import { ObjectId } from 'mongodb'
-import {
-	CategoryType,
-	KindType,
-} from '@common/constants'
 import { Account } from '@models/entities'
 
 export interface Position {
@@ -15,8 +11,8 @@ export interface Board {
 	_id?: ObjectId;
 
 	author: Account['_id'];
-	kind: KindType;
-	category: CategoryType;
+	kind: string;
+	category: string;
 	topic: string;
 	title: string;
 	content: string;

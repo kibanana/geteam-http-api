@@ -1,29 +1,28 @@
 import {
     CategoryType,
-    KindType,
+    KindType
 } from '@common/constants'
-import { OrderOption } from '@common/interfaces'
 
-export const validateKind = (kind: string) => {
+export const validateKind = (kind?: string) => {
     switch (kind) {
         case KindType.All:
         case KindType.Study:
         case KindType.Contest:
             return kind
         default:
-            return KindType.Study
+            return null
     }
 }
 
-export const validateCategory = (kind: string, category: string) => {
-    let result = CategoryType.Development
-
+export const validateCategory = (kind?: string, category?: string) => {
     if (kind === KindType.Study) {
         switch (category) {
             case CategoryType.Development:
             case CategoryType.Design:
             case CategoryType.Etc:
-                result = category 
+                return category
+            default:
+                return null
         }
     } else if (kind === KindType.Contest) {
         switch (category) {
@@ -32,23 +31,23 @@ export const validateCategory = (kind: string, category: string) => {
             case CategoryType.Idea:
             case CategoryType.Etc:
                 return category
+            default:
+                return null
         }
     }
-  
-    return result
+
+    return null
 }
 
-export const validateModifyOrder = (order: string): OrderOption => {
-    let result
+export const validateModifyOrder = (order?: string) => {
     switch (order) {
-        case 'createdAt': case 'endDay': case 'hit':
-            result = { [order]: -1, title: 1 }
-            break
+        case 'createdAt':
+        case 'endDay':
+        case 'hit':
+            return { [order]: -1, title: 1 }
         case 'title':
-            result = { [order]: -1, createdAt: -1 }
-            break
+            return  { [order]: -1, createdAt: -1 }
         default:
-            throw new Error('해당 속성으로 정렬할 수 없습니다')
+            return null
     }
-    return result
 }

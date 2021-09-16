@@ -23,7 +23,7 @@ export default {
             createdAt: new Date()
         })
     },
-    GetList: (params: { recvAccountId?: string, sendAccountId?: string }, options: PaginationOption) => {
+    GetList: async (params: { recvAccountId?: string, sendAccountId?: string }, options: PaginationOption) => {
         const { recvAccountId, sendAccountId } = params
         const { skip, limit } = options
 
@@ -31,14 +31,17 @@ export default {
         if (recvAccountId) filter.recvAccountId = new ObjectId(recvAccountId)
         if (sendAccountId) filter.sendAccountId = new ObjectId(sendAccountId)
 
-        return messageColl.find(filter, { skip, limit }).toArray()
+        const list = await messageColl.find(filter, { skip, limit }).toArray()
+        const count = await messageColl.countDocuments(filter)
+
+        return { list, count }
     },
-    UpdateIsReaded: (params: { _id: string, recvAccountId: string }) => {
+    UpdateIsRead: (params: { _id: string, recvAccountId: string }) => {
         const { _id, recvAccountId } = params
 
         return messageColl.updateOne(
             { _id: new ObjectId(_id), recvAccountId: new ObjectId(recvAccountId) },
-            { $set: { isRead: true, readAt: new Date() } },
+            { $set: { isRead: true, readAt: new Date() } }
         )
     },
     DeleteList: (params: { ids: string[], accountId: string }) => {

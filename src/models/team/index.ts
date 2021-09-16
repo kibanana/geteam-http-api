@@ -24,10 +24,10 @@ export default {
                         title: member.position?.title,
                         description: member.position?.description
                     }
-                } 
+                }
             }),
             content,
-            createdAt: new Date(),
+            createdAt: new Date()
         })
     },
 }

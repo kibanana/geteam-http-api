@@ -15,5 +15,6 @@ export interface Option {
     limit?: number;
     option?: string;
     order?: OrderOption;
+    status?: string;
     searchText?: string;
 }
