@@ -1,5 +1,4 @@
 import express from 'express'
-import passport from 'passport'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
@@ -7,10 +6,11 @@ import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
 dotenv.config()
-import config from '@config'
-import redisClient from '@common/lib/redisClient'
+import config from './config'
+import { redisClient } from '@common/lib'
+import passport from '@middlewares/passport'
 import '@models/connection'
-import router from '@routes'
+import router from '@routes/index'
 
 const app = express()
 

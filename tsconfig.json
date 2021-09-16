@@ -14,9 +14,6 @@
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"paths": {
-			"@config": [
-				"config"
-			],
 			"@common/*": [
 				"src/common/*"
 			],
@@ -37,7 +34,6 @@
 			]
 		}
 	},
-	"include": ["src/**/*.ts"],
 	"exclude": [
 		"node_modules",
 		"dist"
