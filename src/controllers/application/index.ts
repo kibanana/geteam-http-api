@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
 import { KindType } from '@common/constants'
-import { QueryString } from '@common/interfaces'
 import {
     FAILURE_RESPONSE,
     SuccessResponse,
     FailureResponse,
     InternalErrorResponse,
     redisClient,
-    validateKind,
+    validateKind
 } from '@common/lib'
 import ApplicationDB from '@models/application'
 import BoardDB from '@models/board'
@@ -15,18 +14,20 @@ import { ContestApplication } from '@models/entities/application'
 
 export const GetList = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
-        let { kind, author, offset, limit, option } = req.query
+        const { _id: me } = req.user!
+        let { kind, author, offset, limit, status } = req.query
 
-        kind = validateKind(kind!)
-        offset = isNaN(Number(offset)) ? 0 : offset as number
-        limit = isNaN(Number(limit)) ? 12 : limit as number
+        kind = validateKind(kind as string) || KindType.All
+        author = author as string
+        status = status as string
+        const offsetNumber = isNaN(Number(offset)) ? 0 : Number(offset)
+        const limitNumber = isNaN(Number(limit)) ? 12 : Number(limit)
         const isAccepted = req.query.is_accepted === 'true'
         const active = req.query.active === 'true'
 
         const result = await ApplicationDB.GetList(
             { applicant: me, kind, author, isAccepted, active },
-            { skip: offset * limit, limit, option }
+            { skip: offsetNumber * limitNumber, limit: limitNumber, status }
         )
 
         res.send(SuccessResponse(result))
@@ -39,7 +40,7 @@ export const GetList = async (req: Request, res: Response) => {
 
 export const GetListOnMyParticularBoard = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         let { boardid: boardId } = req.params
     
         if (!boardId || boardId.length !== 24) {
@@ -58,7 +59,7 @@ export const GetListOnMyParticularBoard = async (req: Request, res: Response) =>
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { boardId, wantedText } = req.body
         let { kind, position, portfolio, portfolioText } = req.body
 
@@ -103,7 +104,7 @@ export const Create = async (req: Request, res: Response) => {
 
 export const UpdateAccept = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { boardid: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {
@@ -134,7 +135,7 @@ export const UpdateAccept = async (req: Request, res: Response) => {
 
 export const Delete = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { boardid: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {
