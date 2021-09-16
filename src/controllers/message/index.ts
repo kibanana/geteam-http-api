@@ -1,15 +1,18 @@
 import { Request, Response } from 'express'
 import { SuccessResponse, FailureResponse, InternalErrorResponse } from '@common/lib/response'
-import FAILURE_RESPONSE from '@common/lib/failureResponse';
-import { QueryString } from '@common/interfaces'
+import { FAILURE_RESPONSE } from '@common/lib/failureResponse'
 import MessageDB from '@models/message'
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { recvAccountId, content, originalId } = req.body
 
-        if ((originalId && originalId.length !== 24) || !recvAccountId || recvAccountId.length !== 24 || !content) {
+        if (
+            (originalId && originalId.length !== 24) ||
+            (!recvAccountId || recvAccountId.length !== 24) ||
+            !content
+        ) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
@@ -23,15 +26,18 @@ export const Create = async (req: Request, res: Response) => {
     }
 }
 
-export const GetReceiveMessageList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
+export const GetReceiveMessageList = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         let { offset, limit } = req.query
 
-        offset = isNaN(Number(offset)) ? 0 : Number(offset) as number
-        limit = isNaN(Number(limit)) ? 50 : Number(limit) as number
+        const offsetNumber = isNaN(Number(offset)) ? 0 : Number(offset)
+        const limitNumber = isNaN(Number(limit)) ? 50 : Number(limit)
 
-        const messages = await MessageDB.GetList({ recvAccountId: me }, { skip: limit * offset, limit })
+        const messages = await MessageDB.GetList(
+            { recvAccountId: me },
+            { skip: limitNumber * offsetNumber, limit: limitNumber }
+        )
 
         res.send(SuccessResponse(messages))
     }
@@ -41,15 +47,18 @@ export const GetReceiveMessageList = async (req: Request<{}, {}, {}, QueryString
     }
 }
 
-export const GetSendMessageList = async (req: Request<{}, {}, {}, QueryString>, res: Response) => {
+export const GetSendMessageList = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         let { offset, limit } = req.query
 
-        offset = isNaN(Number(offset)) ? 0 : Number(offset) as number
-        limit = isNaN(Number(limit)) ? 50 : Number(limit) as number
+        const offsetNumber = isNaN(Number(offset)) ? 0 : Number(offset)
+        const limitNumber = isNaN(Number(limit)) ? 50 : Number(limit)
 
-        const messages = await MessageDB.GetList({ sendAccountId: me }, { skip: limit * offset, limit })
+        const messages = await MessageDB.GetList(
+            { sendAccountId: me },
+            { skip: limitNumber * offsetNumber, limit: limitNumber }
+        )
 
         res.send(SuccessResponse(messages))
     }
@@ -61,14 +70,14 @@ export const GetSendMessageList = async (req: Request<{}, {}, {}, QueryString>, 
 
 export const UpdateIsRead = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { id } = req.params
 
         if (!id || id.length !== 24) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
         
-        await MessageDB.UpdateIsReaded({ _id: id, recvAccountId: me })
+        await MessageDB.UpdateIsRead({ _id: id, recvAccountId: me })
         
         res.send(SuccessResponse())
     }
@@ -80,15 +89,16 @@ export const UpdateIsRead = async (req: Request, res: Response) => {
 
 export const DeleteList = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { ids } = req.query
 
         let isValid = true
         const messageIdList = String(ids).split('')
+        messageIdList.map((id: string) => {
+            if (!id || id.length !== 24) isValid = false
+        })
 
-        messageIdList.map((id: string) => { if (!id || id.length !== 24) isValid = false })
-
-        if (!messageIdList.length || isValid) {
+        if (messageIdList.length === 0 || !isValid) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
@@ -104,7 +114,7 @@ export const DeleteList = async (req: Request, res: Response) => {
 
 export const DeleteItem = async (req: Request, res: Response) => {
     try {
-        const { _id: me } = req.user
+        const { _id: me } = req.user!
         const { id } = req.params
 
         if (!id || id.length !== 24) {
