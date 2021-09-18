@@ -9,10 +9,10 @@ export default router
 router.use(passport.authenticate('jwt'))
 
 router.get('/', controller.GetList)
-router.get('/:boardid', controller.GetListOnMyParticularBoard)
+router.get('/:id', controller.GetListOnMyParticularBoard)
 
 router.post('/', controller.Create)
 
-router.patch('/:boardid/:applicationid/accept', controller.UpdateAccept)
+router.patch('/:id/:applicationid/accept', controller.UpdateAccept)
 
-router.delete('/:boardid/:applicationid', controller.Delete)
+router.delete('/:id/:applicationid', controller.Delete)

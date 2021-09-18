@@ -5,7 +5,7 @@ export interface Account {
 
     id: string;
     name: string;
-    pwd: string;
+    password: string;
     sNum: number;
     interests: string[];
     profile: string;

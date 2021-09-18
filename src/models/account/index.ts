@@ -14,25 +14,25 @@ export default {
     },
     SignUp: (params: {
         id: string,
-        pwd: string,
+        password: string,
         name: string,
-        sNum: number,
+        studentNumber: number,
         interests: string[],
         profile: string,
         verifyKey: string
     }) => {
-        const { id, name, sNum, interests, profile, verifyKey } = params
-        let { pwd } = params
+        const { id, name, studentNumber, interests, profile, verifyKey } = params
+        let { password } = params
 
-        pwd = bcrypt.hashSync(pwd)
+        password = bcrypt.hashSync(password)
 
         const currentDate = new Date()
 
         return accountColl.insertOne({
             id,
             name,
-            pwd,
-            sNum,
+            password,
+            studentNumber,
             interests,
             profile,
             notifications: {
@@ -57,7 +57,7 @@ export default {
 
         return accountColl.findOne(
             { _id: new ObjectId(_id) },
-            { projection: { pwd: false } }
+            { projection: { password: false } }
         )
     },
     GetInterests: (params: { id: string }) => {
@@ -73,7 +73,7 @@ export default {
 
         return accountColl.findOne(
             { _id: new ObjectId(_id), active: true, isVerified: true },
-            { projection: { id: true, name: true, pwd: true, interests: true } }
+            { projection: { id: true, name: true, password: true, interests: true } }
         )
     },
     GetCompareEmail: async (params: { id: string }) => {
@@ -125,14 +125,14 @@ export default {
             { $set: { verifyKey } }
         )
     },
-    UpdatePassword: (params: { _id: string, pwd: string }) => {
+    UpdatePassword: (params: { _id: string, password: string }) => {
         const { _id } = params
-        let { pwd } = params
-        pwd = bcrypt.hashSync(pwd)
+        let { password } = params
+        password = bcrypt.hashSync(password)
 
         return accountColl.updateOne(
             { _id: new ObjectId(_id) },
-            { $set: { pwd, updatedAt: new Date() } }
+            { $set: { password, updatedAt: new Date() } }
         )
     },
     UpdateInfo: (params: { _id: string, name: string, sNum: number, interests: string[], profile: string }) => {

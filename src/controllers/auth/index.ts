@@ -13,9 +13,9 @@ import config from '../../../config'
 
 export const Create = async (req: Request, res: Response) => {
     try {
-        const { id, name, pwd, sNum, interests, profile } = req.body
+        const { id, name, password, studentNumber, interests, profile } = req.body
 
-        if (!id || !name || !pwd || isNaN(sNum) || !interests || !Array.isArray(interests) || !profile) {
+        if (!id || !name || !password || isNaN(studentNumber) || !interests || !Array.isArray(interests) || !profile) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
     
@@ -25,7 +25,7 @@ export const Create = async (req: Request, res: Response) => {
             .catch((err: Error) => console.log(err))
     
         await AccountDB.DeleteBeforeSignUp({ id })
-        await AccountDB.SignUp({ id, name, pwd, sNum, interests, profile, verifyKey })
+        await AccountDB.SignUp({ id, name, password, studentNumber, interests, profile, verifyKey })
         
         res.status(201).end(SuccessResponse())
     } catch (err) {
@@ -99,9 +99,9 @@ export const SetVerifyKey = async (req: Request, res: Response) => {
 
 export const SignIn = async (req: Request, res: Response) => {
     try {
-        const { id, pwd } = req.body
+        const { id, password } = req.body
 
-        if (!id || !pwd) {
+        if (!id || !password) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
     
@@ -109,7 +109,7 @@ export const SignIn = async (req: Request, res: Response) => {
         if (!result) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
-        if (bcrypt.compareSync(pwd, result.pwd)) {
+        if (bcrypt.compareSync(password, result.password)) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
     
@@ -232,9 +232,9 @@ export const ResetPassword = async (req: Request, res: Response) => {
         }
     
         if (result.interests.includes(hint)) {
-            const newPwd = createHash(result.interests.join('') + new Date().toISOString())
-            await AccountDB.UpdatePassword({ _id: result._id, pwd: newPwd })
-            sendEmail(EmailType.PasswordReset, { email: result.id, name: result.name, password: newPwd })
+            const newPassword = createHash(result.interests.join('') + new Date().toISOString())
+            await AccountDB.UpdatePassword({ _id: result._id, password: newPassword })
+            sendEmail(EmailType.PasswordReset, { email: result.id, name: result.name, password: newPassword })
                 .catch((err: Error) => console.log(err))
         }
     
@@ -282,18 +282,18 @@ export const CheckIsDuplicatedSnum = async (req: Request, res: Response) => {
 export const UpdatePassword = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        const { oldPwd, newPwd } = req.body
+        const { oldPassword, newPassword } = req.body
         
         const result = await AccountDB.GetPassword({ _id: me })
-        if (!result || !result.pwd) {
+        if (!result || !result.password) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
         
-        if (!bcrypt.compareSync(result.pwd, bcrypt.hashSync(oldPwd))) {
+        if (!bcrypt.compareSync(result.password, bcrypt.hashSync(oldPassword))) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
-        await AccountDB.UpdatePassword({ _id: me, pwd: newPwd })
+        await AccountDB.UpdatePassword({ _id: me, password: newPassword })
         
         const accessToken = (req.header('Authorization') || '').replace('Bearer ', '')
     

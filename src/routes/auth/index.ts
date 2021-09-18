@@ -5,7 +5,7 @@ import * as controller from '@controllers/auth'
 const router = express.Router()
 export default router
 
-router.post('/', controller.Create)
+router.post('/sign-up', controller.Create)
 router.post('/compare-email', controller.CompareEmail)
 router.post('/verify', controller.CompareVerifyKey)
 router.post('/verify/new', controller.SetVerifyKey)
@@ -20,7 +20,7 @@ router.post('/check-email', controller.CheckIsDuplicatedEmail)
 router.post('/check-snum', controller.CheckIsDuplicatedSnum)
 
 // Reset Password (Check Interests, Create Hash)
-router.patch('/reset/pwd', controller.ResetPassword)
+router.patch('/password/reset', controller.ResetPassword)
 
 router.use(passport.authenticate('jwt'))
 
@@ -28,7 +28,7 @@ router.post('/sign-out', controller.SignOut) // Blacklisting Token, Set null Ref
 
 router.get('/info', controller.GetInfo)
 
-router.patch('/pwd', controller.UpdatePassword)
+router.patch('/password', controller.UpdatePassword)
 router.patch('/info', controller.UpdateInfo)
 router.patch('/notifications', controller.UpdateNotifications)
 

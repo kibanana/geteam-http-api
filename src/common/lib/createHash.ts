@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
 
-export const createHash = (pwd: string) => {
-    return bcrypt.hashSync(pwd)
+export const createHash = (text: string) => {
+    return bcrypt.hashSync(text)
 }

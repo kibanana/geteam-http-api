@@ -41,7 +41,7 @@ export const GetList = async (req: Request, res: Response) => {
 export const GetListOnMyParticularBoard = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        let { boardid: boardId } = req.params
+        let { id: boardId } = req.params
     
         if (!boardId || boardId.length !== 24) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
@@ -105,7 +105,7 @@ export const Create = async (req: Request, res: Response) => {
 export const UpdateAccept = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        const { boardid: boardId, applicationid: applicationId } = req.params
+        const { id: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
@@ -136,7 +136,7 @@ export const UpdateAccept = async (req: Request, res: Response) => {
 export const Delete = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        const { boardid: boardId, applicationid: applicationId } = req.params
+        const { id: boardId, applicationid: applicationId } = req.params
 
         if (!boardId || boardId.length !== 24 || !applicationId || applicationId.length !== 24) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
