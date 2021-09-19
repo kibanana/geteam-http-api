@@ -2,6 +2,7 @@ import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { entities } from '@common/constants'
 import { PaginationOption } from '@common/interfaces'
+import { Message } from '@models/entities'
 import { Filter } from './interfaces'
 
 const messageColl = connection.collection(entities.MESSAGE)
@@ -31,7 +32,7 @@ export default {
         if (recvAccountId) filter.recvAccountId = new ObjectId(recvAccountId)
         if (sendAccountId) filter.sendAccountId = new ObjectId(sendAccountId)
 
-        const list = await messageColl.find(filter, { skip, limit }).toArray()
+        const list: Array<Message> | null = await messageColl.find(filter, { skip, limit }).toArray()
         const count = await messageColl.countDocuments(filter)
 
         return { list, count }

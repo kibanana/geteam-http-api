@@ -3,7 +3,10 @@ import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { entities } from '@common/constants'
 import { Option } from '@common/interfaces'
-import { ContestApplication } from '@models/entities/application'
+import {
+    Application,
+    ContestApplication
+} from '@models/entities'
 import { Filter } from './interfaces'
 
 const applicationColl = connection.collection(entities.APPLICATION)
@@ -96,7 +99,7 @@ export default {
             }
         }
 
-        const list = await applicationColl.find(filter, { skip, limit, sort: { createdAt: -1 } }).toArray()
+        const list: Array<Application> | null  = await applicationColl.find(filter, { skip, limit, sort: { createdAt: -1 } }).toArray()
         const count = await applicationColl.countDocuments(filter)
 
         return { list, count }

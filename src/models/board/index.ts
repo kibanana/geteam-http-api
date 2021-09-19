@@ -87,12 +87,12 @@ export default {
         if (category) filter.category = category
         if (searchText) filter.$text = { $search: searchText }
 
-        const list = await boardColl.find(filter, { skip, limit, sort: order as any }).toArray()
+        const list: Array<Board> | null = await boardColl.find(filter, { skip, limit, sort: order as any }).toArray()
         const count = await boardColl.countDocuments(filter)
 
         return { list, count }
     },
-    GetItem: async (params: { _id: string }) => {
+    GetItem: async (params: { _id: string }): Promise<Board | null> => {
         const { _id } = params
 
         return boardColl.findOne({ _id: new ObjectId(_id) })

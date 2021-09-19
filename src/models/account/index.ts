@@ -2,6 +2,7 @@ import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import { entities } from '@common/constants'
+import { Account } from '@models/entities'
 import { Filter, UpdateNotifications } from './interfaces'
 
 const accountColl = connection.collection(entities.ACCOUNT)
@@ -47,12 +48,12 @@ export default {
             updatedAt: currentDate
         })
     },
-    SignIn: (params: { id: string }) => {
+    SignIn: (params: { id: string }): Promise<Account | null> => {
         const { id } = params
 
         return accountColl.findOne({ id, isVerified: true, active: true })
     },
-    GetItem: (params: { _id: string }) => {
+    GetItem: (params: { _id: string }): Promise<Partial<Account> | null> => {
         const { _id } = params
 
         return accountColl.findOne(
@@ -60,7 +61,7 @@ export default {
             { projection: { password: false } }
         )
     },
-    GetInterests: (params: { id: string }) => {
+    GetInterests: (params: { id: string }): Promise<Partial<Account> | null> => {
         const { id } = params
 
         return accountColl.findOne(
@@ -68,7 +69,7 @@ export default {
             { projection: { id: true, name: true, interests: true } }
         )
     },
-    GetPassword: (params: { _id: string }) => {
+    GetPassword: (params: { _id: string }): Promise<Partial<Account> | null> => {
         const { _id } = params
 
         return accountColl.findOne(
