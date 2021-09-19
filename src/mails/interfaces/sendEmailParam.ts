@@ -1,4 +1,7 @@
-import { Board } from '@models/entities'
+import {
+    Account,
+    Board
+} from '@models/entities'
 
 export interface SendEmailParam {
     email: string;
@@ -8,7 +11,7 @@ export interface SendEmailParam {
     kind: string;
     boardId: Board['_id'];
     boardTitle: Board['title'];
-    boardAuthor: Board['author'];
+    boardAuthor: Account['name'];
     title: string;
     content: string;
 }

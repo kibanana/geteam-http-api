@@ -1,7 +1,10 @@
-import { ObjectId } from 'mongodb'
+import {
+    Document,
+    ObjectId
+} from 'mongodb'
 import { Account } from '@models/entities'
 
-export interface Message {
+export interface Message extends Document {
     _id: ObjectId;
     
     originalId: Message['_id']; // reply

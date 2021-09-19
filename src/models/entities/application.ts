@@ -1,4 +1,7 @@
-import { ObjectId } from 'mongodb'
+import {
+    Document,
+    ObjectId
+} from 'mongodb'
 import {
     Account,
     Board
@@ -10,12 +13,12 @@ export interface ContestApplication {
     portfolioText?: string; // only contest
 }
 
-export interface Application {
+export interface Application extends Document {
     _id: ObjectId;
 
-    applicant: Account['_id'];
+    applicantId: Account['_id'];
     boardId: Board['_id'];
-    author: Account['_id'];
+    authorId: Account['_id'];
     position: ContestApplication['position'];
     portfolio: ContestApplication['portfolio'];
     portfolioText: ContestApplication['portfolioText'];

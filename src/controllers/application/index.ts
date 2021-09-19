@@ -15,10 +15,10 @@ import { ContestApplication } from '@models/entities/application'
 export const GetList = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        let { kind, author, offset, limit, status } = req.query
+        let { kind, authorId, offset, limit, status } = req.query
 
         kind = validateKind(kind as string) || KindType.All
-        author = author as string
+        authorId = authorId as string
         status = status as string
         const offsetNumber = isNaN(Number(offset)) ? 0 : Number(offset)
         const limitNumber = isNaN(Number(limit)) ? 12 : Number(limit)
@@ -26,7 +26,7 @@ export const GetList = async (req: Request, res: Response) => {
         const active = req.query.active === 'true'
 
         const result = await ApplicationDB.GetList(
-            { applicant: me, kind, author, isAccepted, active },
+            { applicantId: me, kind, authorId, isAccepted, active },
             { skip: offsetNumber * limitNumber, limit: limitNumber, status }
         )
 
@@ -47,7 +47,7 @@ export const GetListOnMyParticularBoard = async (req: Request, res: Response) =>
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
     
-        const result = await ApplicationDB.GetList({ author: me, boardId })
+        const result = await ApplicationDB.GetList({ authorId: me, boardId })
     
         res.send(SuccessResponse(result))
     }
@@ -71,11 +71,11 @@ export const Create = async (req: Request, res: Response) => {
         if (!board) {
             return res.status(404).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
-        if (me === board.author) {
+        if (me === String(board.authorId)) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
 
-        const isApplied = await ApplicationDB.IsApplied({ applicant: me, boardId })
+        const isApplied = await ApplicationDB.IsApplied({ applicantId: me, boardId })
         if (isApplied) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
@@ -88,7 +88,7 @@ export const Create = async (req: Request, res: Response) => {
             contestObj.portfolioText = portfolioText
         }
 
-        const result = await ApplicationDB.Create({ applicant: me, author: board.author, boardId, wantedText, ...contestObj })
+        const result = await ApplicationDB.Create({ applicantId: me, authorId: String(board.authorId), boardId, wantedText, ...contestObj })
 
         await BoardDB.UpdateApplicationCnt({ _id: boardId, diff: 1 })
 
@@ -111,11 +111,11 @@ export const UpdateAccept = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
-        if (await ApplicationDB.IsAccepted({ applicant: applicationId, boardId })) {
+        if (await ApplicationDB.IsAccepted({ applicantId: applicationId, boardId })) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
 
-        const updateIsAcceptedResult = await ApplicationDB.UpdateIsAccepted({ _id: applicationId, boardId, author: me })
+        const updateIsAcceptedResult = await ApplicationDB.UpdateIsAccepted({ _id: applicationId, boardId, authorId: me })
         if (updateIsAcceptedResult.matchedCount === 0) {
             return res.status(404).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
@@ -142,7 +142,7 @@ export const Delete = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
-        const result = await ApplicationDB.Delete({ _id: applicationId, boardId, author: me })
+        const result = await ApplicationDB.Delete({ _id: applicationId, boardId, authorId: me })
         if (result === false) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }

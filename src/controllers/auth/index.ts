@@ -113,7 +113,7 @@ export const SignIn = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
     
-        const payload = { _id: result._id }
+        const payload = { _id: String(result._id) }
     
         const accessOptions = {
             issuer: config.JWT_ISSUER,
@@ -233,7 +233,7 @@ export const ResetPassword = async (req: Request, res: Response) => {
     
         if (result.interests.includes(hint)) {
             const newPassword = createHash(result.interests.join('') + new Date().toISOString())
-            await AccountDB.UpdatePassword({ _id: result._id, password: newPassword })
+            await AccountDB.UpdatePassword({ _id: String(result._id), password: newPassword })
             sendEmail(EmailType.PasswordReset, { email: result.id, name: result.name, password: newPassword })
                 .catch((err: Error) => console.log(err))
         }
@@ -253,7 +253,7 @@ export const CheckIsDuplicatedEmail = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
 
-        const isDuplicated = await AccountDB.doesExist({ id: email })
+        const isDuplicated = await AccountDB.DoesExist({ id: email })
 
         res.send(SuccessResponse({ isDuplicated }))
     } catch (err) {
@@ -264,13 +264,13 @@ export const CheckIsDuplicatedEmail = async (req: Request, res: Response) => {
 
 export const CheckIsDuplicatedSnum = async (req: Request, res: Response) => {
     try {
-        const { sNum } = req.body
+        const { studentNumber } = req.body
 
-        if (isNaN(sNum)) {
+        if (isNaN(studentNumber)) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
         
-        const isDuplicated = await AccountDB.doesExist({ sNum })
+        const isDuplicated = await AccountDB.DoesExist({ studentNumber })
 
         res.send(SuccessResponse({ isDuplicated }))
     } catch (err) {
@@ -325,9 +325,9 @@ export const GetInfo = async (req: Request, res: Response) => {
 export const UpdateInfo = async (req: Request, res: Response) => {
     try {
         const { _id: me } = req.user!
-        const { name, sNum, interests, profile } = req.body
+        const { name, studentNumber, interests, profile } = req.body
 
-        await AccountDB.UpdateInfo({ _id: me, name, sNum, interests, profile })
+        await AccountDB.UpdateInfo({ _id: me, name, studentNumber, interests, profile })
     
         res.send(SuccessResponse())
     } catch (err) {

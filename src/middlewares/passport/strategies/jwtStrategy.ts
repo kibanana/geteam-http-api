@@ -10,7 +10,7 @@ export default new JWTStrategy(
         issuer: config.JWT_ISSUER
     }, (async (payload: JwtPayload, done) => {
         try {
-            const doesExist = await AccountDB.doesExist({ _id: payload._id })
+            const doesExist = await AccountDB.DoesExist({ _id: payload._id })
 
             if (!doesExist) done(null, false)
             else done(null, { _id: payload._id })

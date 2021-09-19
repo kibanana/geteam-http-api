@@ -1,4 +1,7 @@
-import { ObjectId } from 'mongodb'
+import {
+    Document,
+    ObjectId
+} from 'mongodb'
 import { Account } from '@models/entities'
 
 export interface Position {
@@ -7,10 +10,10 @@ export interface Position {
     cnt?: number;
 }
 
-export interface Board {
+export interface Board extends Document {
 	_id?: ObjectId;
 
-	author: Account['_id'];
+	authorId: Account['_id'];
 	kind: string;
 	category: string;
 	topic: string;

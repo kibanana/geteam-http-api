@@ -32,7 +32,7 @@ export default {
         if (recvAccountId) filter.recvAccountId = new ObjectId(recvAccountId)
         if (sendAccountId) filter.sendAccountId = new ObjectId(sendAccountId)
 
-        const list: Array<Message> | null = await messageColl.find(filter, { skip, limit }).toArray()
+        const list: Message[] = await messageColl.find(filter, { skip, limit }).toArray()
         const count = await messageColl.countDocuments(filter)
 
         return { list, count }

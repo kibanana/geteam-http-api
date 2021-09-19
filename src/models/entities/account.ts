@@ -1,12 +1,15 @@
-import { ObjectId } from 'mongodb'
+import {
+    Document,
+    ObjectId
+} from 'mongodb'
 
-export interface Account {
+export interface Account extends Document {
     _id: ObjectId;
 
     id: string;
     name: string;
     password: string;
-    sNum: number;
+    studentNumber: number;
     interests: string[];
     profile: string;
     notifications: {

@@ -8,9 +8,11 @@ import { JwtPayload, OrderOption } from '@common/interfaces'
 import { redisClient } from '@common/lib/redisClient'
 import { validateKind, validateCategory, validateModifyOrder } from '@common/lib/validateValue'
 import sendEmail from '@mails/index'
+import AccountDB from '@models/account'
 import ApplicationDB from '@models/application'
 import BoardDB from '@models/board'
 import TeamDB from '@models/team'
+import { Member } from '@models/entities'
 import config from '../../../config'
 
 export const GetList = async (req: Request, res: Response) => {
@@ -35,7 +37,7 @@ export const GetList = async (req: Request, res: Response) => {
         catch (err) {}
     
         const result = await BoardDB.GetList(
-            { kind, category, author: me },
+            { kind, category, authorId: me },
             { skip: limitNumber * offsetNumber, limit: limitNumber, order: orderOption, searchText }
         )
         
@@ -73,8 +75,8 @@ export const GetItem = async (req: Request, res: Response) => {
 
         const data: BoardGetItemRes = { board }
         if (me) {
-            data.isApplied = await ApplicationDB.IsApplied({ applicant: me, boardId: id })
-            data.isAccepted = await ApplicationDB.IsAccepted({ applicant: me, boardId: id })
+            data.isApplied = await ApplicationDB.IsApplied({ applicantId: me, boardId: id })
+            data.isAccepted = await ApplicationDB.IsAccepted({ applicantId: me, boardId: id })
         }
 
         res.send(SuccessResponse(data))
@@ -110,13 +112,13 @@ export const Create = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
     
-        const countBoardByMe = await BoardDB.GetBoardCount({ author: me })
+        const countBoardByMe = await BoardDB.GetBoardCount({ authorId: me })
         if (countBoardByMe > 3) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.EXCCED_LIMIT))
         }
     
         const result = await BoardDB.Create({
-            author: me,
+            authorId: me,
             kind,
             category,
             topic,
@@ -165,7 +167,7 @@ export const Update = async (req: Request, res: Response) => {
 
         const result = await BoardDB.UpdateItem({
             _id: id,
-            author: me,
+            authorId: me,
             kind,
             category,
             topic,
@@ -194,7 +196,7 @@ export const Delete = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
         
-        await BoardDB.Delete({ _id: id, author: me })
+        await BoardDB.Delete({ _id: id, authorId: me })
     
         res.send(SuccessResponse())
     } catch (err) {
@@ -212,7 +214,7 @@ export const CreateTeam = async (req: Request, res: Response) => {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.INVALID_PARAM))
         }
     
-        const countTeamByMe = await BoardDB.GetTeamCount({ author: me })
+        const countTeamByMe = await BoardDB.GetTeamCount({ authorId: me })
         if (countTeamByMe > 2) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.EXCCED_LIMIT))
         }
@@ -222,28 +224,40 @@ export const CreateTeam = async (req: Request, res: Response) => {
             return res.status(404).send(FailureResponse(FAILURE_RESPONSE.NOT_FOUND))
         }
     
-        if (me !== board.author || board.isCompleted) {
+        if (me !== String(board.authorId) || board.isCompleted) {
             return res.status(400).send(FailureResponse(FAILURE_RESPONSE.BAD_REQUEST))
         }
     
         await BoardDB.UpdateIsCompleted({ _id: id })
 
-        const result = await ApplicationDB.GetList({ author: me, active: true, boardId: id })
+        const result = await ApplicationDB.GetList({ authorId: me, active: true, boardId: id })
         const { list } = result
 
-        await TeamDB.Create({ name, master: me, members: list, content })
+        const members: Member[] = list.map(application => {
+            return {
+                accountId: application.applicantId,
+                position: application.position
+            }
+        })
+        await TeamDB.Create({ name, masterId: me, members, content })
         
         await redisClient.incCnt('teamCnt')
 
-        for (let i = 0; i < list.length; i++) {
+        const applicantMap: Record<string, string> = {}
+        const applicantList = await AccountDB.GetListById({ ids: list.map(application => application._id) })
+        applicantList.forEach(application => applicantMap[String(application._id)] = application.id)
+        const applicantInfoList: string[] = Object.values(applicantMap)
+
+        const boardAuthor = await AccountDB.GetItem({ _id: String(board.authorId) })
+
+        for (let i = 0; i < applicantList.length; i++) {
             sendEmail(EmailType.TeamCompleted, {
-                email: list[i].applicant,
+                email: applicantInfoList[i],
                 kind: board.kind,
                 boardTitle: board.title,
                 boardId: board._id,
-                boardAuthor: board.author,
-            })
-            .catch((err: Error) => console.log(err))
+                boardAuthor: boardAuthor!.name,
+            }).catch((err: Error) => console.log(err))
         }
         
         res.send(SuccessResponse())

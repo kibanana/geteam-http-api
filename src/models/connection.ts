@@ -14,7 +14,7 @@ export default connect(
         console.log('Mongodb connected')
         return connection
     })
-    .catch((err) => {
+    .catch((err: Error) => {
         console.log('Mongodb not connected')
         console.log(err)
     })

@@ -1,31 +1,23 @@
 import { connection } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { entities } from '@common/constants'
-import { Member } from './interfaces'
+import { Member } from '@models/entities'
 
 const teamColl = connection.collection(entities.TEAM)
 
 export default {
     Create: (params: {
         name: string,
-        master: string,
+        masterId: string,
         members: Member[],
         content: string
     }) => {
-        const { name, master, members, content } = params
+        const { name, masterId, members, content } = params
         
         return teamColl.insertOne({
             name,
-            leader: new ObjectId(master),
-            members: members.map((member: Member) => {
-                return {
-                    accountId: new ObjectId(member.accountId),
-                    position: {
-                        title: member.position?.title,
-                        description: member.position?.description
-                    }
-                }
-            }),
+            masterId: new ObjectId(masterId),
+            members,
             content,
             createdAt: new Date()
         })

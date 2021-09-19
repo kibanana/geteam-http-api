@@ -16,7 +16,7 @@ const boardColl = connection.collection(entities.BOARD)
 
 export default {
     Create: (params: {
-        author: string,
+        authorId: string,
         kind: string,
         category: string,
         topic: string,
@@ -27,7 +27,7 @@ export default {
         endDate: Date
     }) => {
         const {
-            author,
+            authorId,
             kind,
             category,
             topic,
@@ -38,7 +38,7 @@ export default {
         } = params
 
         const item: Board = {
-            author: new ObjectId(author),
+            authorId: new ObjectId(authorId),
             kind,
             category,
             topic,
@@ -66,18 +66,18 @@ export default {
         params: {
             kind: string,
             category: string,
-            author?: string
+            authorId?: string
         },
         options: Option
     ) => {
-        const { kind, category, author } = params
+        const { kind, category, authorId } = params
         const { skip, limit, order, searchText } = options
 
         const filter: Partial<Filter> = { active: true, isCompleted: false }
 
-        if (author) { // 종료일을 지나지 않았거나, 종료일을 지났지만 내가 쓴 글
+        if (authorId) { // 종료일을 지나지 않았거나, 종료일을 지났지만 내가 쓴 글
             filter.$or = [
-                { author: new ObjectId(author), endDay: { $lte: new Date() } },
+                { authorId: new ObjectId(authorId), endDay: { $lte: new Date() } },
                 { endDay: { $gte: new Date() } }
             ]
         }
@@ -87,7 +87,8 @@ export default {
         if (category) filter.category = category
         if (searchText) filter.$text = { $search: searchText }
 
-        const list: Array<Board> | null = await boardColl.find(filter, { skip, limit, sort: order as any }).toArray()
+        const list: Board[] = await boardColl.find(filter, { skip, limit, sort: order as any }).toArray()
+        console.log('list', list)
         const count = await boardColl.countDocuments(filter)
 
         return { list, count }
@@ -97,20 +98,20 @@ export default {
 
         return boardColl.findOne({ _id: new ObjectId(_id) })
     },
-    GetBoardCount: (params: { author: string }) => {
-        const { author } = params
+    GetBoardCount: (params: { authorId: string }) => {
+        const { authorId } = params
 
-        return boardColl.countDocuments({ author: new ObjectId(author), endDate: { $lte: new Date() } })
+        return boardColl.countDocuments({ authorId: new ObjectId(authorId), endDate: { $lte: new Date() } })
     },
-    GetTeamCount: (params: { author: string }) => {
-        const { author } = params
+    GetTeamCount: (params: { authorId: string }) => {
+        const { authorId } = params
 
-        return boardColl.countDocuments({ author: new ObjectId(author), isCompleted: true })
+        return boardColl.countDocuments({ authorId: new ObjectId(authorId), isCompleted: true })
     },
     UpdateItem: (params: UpdateItem) => {
         const {
             _id,
-            author,
+            authorId,
             kind,
             category,
             topic,
@@ -142,15 +143,15 @@ export default {
         }
 
         return boardColl.updateOne(
-            { _id: new ObjectId(_id), author: new ObjectId(author), acceptCnt: { $lte: 0 } },
+            { _id: new ObjectId(_id), authorId: new ObjectId(authorId), acceptCnt: { $lte: 0 } },
             updateQuery
         )
     },
-    UpdateIsCompleted: (params: { _id: string, author?: Account['_id'] }) => {
-        const { _id, author } = params
+    UpdateIsCompleted: (params: { _id: string, authorId?: Account['_id'] }) => {
+        const { _id, authorId } = params
 
         return boardColl.updateOne(
-            { _id: new ObjectId(_id), author: new ObjectId(author) },
+            { _id: new ObjectId(_id), authorId: new ObjectId(authorId) },
             { $set: { isCompleted: true, updatedAt: new Date() } }
         )
     },
@@ -187,11 +188,11 @@ export default {
             }
         )
     },
-    Delete: (params: { _id: string, author: string }) => {
-        const { _id, author } = params
+    Delete: (params: { _id: string, authorId: string }) => {
+        const { _id, authorId } = params
 
         return boardColl.updateOne(
-            { _id: new ObjectId(_id), author: new ObjectId(author) },
+            { _id: new ObjectId(_id), authorId: new ObjectId(authorId) },
             { $set: { active: false } }
         )
     },

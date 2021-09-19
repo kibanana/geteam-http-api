@@ -6,7 +6,7 @@ import { Position } from '@models/entities/board'
 
 export interface UpdateItem {
     _id?: string;
-    author?: string;
+    authorId?: string;
     kind: KindType;
     category: CategoryType;
     topic: string;

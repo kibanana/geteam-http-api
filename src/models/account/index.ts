@@ -53,6 +53,11 @@ export default {
 
         return accountColl.findOne({ id, isVerified: true, active: true })
     },
+    GetListById: (params: { ids: ObjectId[] }): Promise<Account[]> => {
+        const { ids } = params
+
+        return accountColl.find({ _id: ids.map(id => new ObjectId(id)) }).toArray()
+    },
     GetItem: (params: { _id: string }): Promise<Partial<Account> | null> => {
         const { _id } = params
 
@@ -82,14 +87,14 @@ export default {
 
         return (await accountColl.countDocuments({ id, isVerified: true })) > 0
     },
-    doesExist: async (param: Partial<{ _id: string, id: string, sNum: number }>): Promise<boolean> => {
-        const { _id, id, sNum } = param
+    DoesExist: async (param: Partial<{ _id: string, id: string, studentNumber: number }>): Promise<boolean> => {
+        const { _id, id, studentNumber } = param
 
         const filter: Partial<Filter> = {}
 
         if (_id) filter._id = new ObjectId(_id)
         if (id) filter.id = id
-        if (sNum) filter.sNum = sNum
+        if (studentNumber) filter.studentNumber = studentNumber
 
         return (await accountColl.countDocuments(filter)) > 0
     },
@@ -136,12 +141,12 @@ export default {
             { $set: { password, updatedAt: new Date() } }
         )
     },
-    UpdateInfo: (params: { _id: string, name: string, sNum: number, interests: string[], profile: string }) => {
-        const { _id, name, sNum, interests, profile } = params
+    UpdateInfo: (params: { _id: string, name: string, studentNumber: number, interests: string[], profile: string }) => {
+        const { _id, name, studentNumber, interests, profile } = params
 
         return accountColl.updateOne(
             { _id: new ObjectId(_id) },
-            { $set: { name, sNum, interests, profile, updatedAt: new Date() } }
+            { $set: { name, studentNumber, interests, profile, updatedAt: new Date() } }
         )
     },
     UpdateNotifications: (params: { _id?: string;
